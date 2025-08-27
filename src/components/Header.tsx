@@ -5,7 +5,7 @@ export default function Header() {
     <header className="sticky top-0 z-50 flex justify-between items-center p-4 border-b-2 bg-rose-50 dark:bg-slate-900 w-full">
       {/* Left side: Name and ID */}
       <span className="rounded-md px-4 py-1 shadow-sm font-semibold bg-rose-500 hover:bg-rose-600 text-white">
-        <span className="hidden md:inline">Dinh Anh Duy Tran - 21654197</span>
+        <span className="hidden md:inline">Noel Tran - 21654197</span>
         <span className="md:hidden">21654197</span>
       </span>
 
