@@ -23,7 +23,7 @@ export default function NavBar() {
   ];
 
   return (
-    <nav className="relative flex h-16 w-full items-center justify-between border-be px-4 shadow-sm ">
+    <nav className="relative flex h-16 w-full items-center justify-between px-4">
       {/* Desktop Navigation - Hidden on mobile */}
       <div className="hidden sm:flex justify-evenly w-full ">
         {navItems.map((item) => {
