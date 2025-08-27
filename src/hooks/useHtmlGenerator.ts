@@ -5,7 +5,7 @@ export const useHtmlGenerator = () => {
     const tabsHTML = tabs
       .map(
         (tab, index) => `
-  <div class="bg-white border border-slate-500 border-t-0 rounded-b-lg p-2 overflow-y-auto min-h-[200px]" id="tab${
+  <div class="bg-white border border-rose-500 rounded-b-lg p-2 overflow-y-auto min-h-[200px]" id="tab${
     index + 1
   }" style="display: ${index === 0 ? "block" : "none"};">
     <div>${tab.content}</div>
@@ -55,12 +55,12 @@ function showTab(tabNumber) {
     <title>Generated Tabs</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-50">
+<body class="bg-gradient-to-r from-rose-500 to-pink-400">
     <div class="text-center my-5">
-        <h1 class="text-4xl font-bold mb-2 text-rose-700">Tab Generator</h1>
+        <h1 class="text-4xl font-bold mb-2 text-white">Custom Tab Collection</h1>
     </div>
     <div class="max-w-6xl mx-auto p-6">
-        <div class="bg-rose-200 p-2 border-b border-slate-500 rounded-t-lg">
+        <div class="bg-rose-200 border border-rose-500 rounded-t-lg p-4">
             <div class="flex gap-2 overflow-x-auto pb-2">
 ${buttonsHTML}
             </div>
