@@ -110,10 +110,10 @@ export default function TabGenerator() {
     const tabsHTML = tabs
       .map(
         (tab, index) => `
-  <div class="tab-content" id="tab${index + 1}" style="display: ${
-          index === 0 ? "block" : "none"
-        }; padding: 20px; border: 1px solid #ddd; border-top: none;">
-    ${tab.content}
+  <div class="bg-white border border-slate-500 border-t-0 rounded-b-lg p-2 overflow-y-auto min-h-[200px]" id="tab${
+    index + 1
+  }" style="display: ${index === 0 ? "block" : "none"};">
+    <div>${tab.content}</div>
   </div>`
       )
       .join("");
@@ -121,11 +121,11 @@ export default function TabGenerator() {
     const buttonsHTML = tabs
       .map(
         (tab, index) => `
-  <button class="tab-button" onclick="showTab(${
-    index + 1
-  })" style="padding: 10px 20px; margin-right: 5px; border: 1px solid #ddd; background: ${
-          index === 0 ? "#007bff" : "#f8f9fa"
-        }; color: ${index === 0 ? "white" : "#333"}; cursor: pointer;">
+  <button class="tab-button px-3 py-1 mb-2 text-sm rounded transition-colors whitespace-nowrap flex-shrink-0 cursor-pointer ${
+    index === 0
+      ? "bg-rose-500 text-white"
+      : "bg-rose-200 text-slate-700 hover:bg-rose-300"
+  }" onclick="showTab(${index + 1})">
     ${tab.title}
   </button>`
       )
@@ -135,22 +135,20 @@ export default function TabGenerator() {
 <script>
 function showTab(tabNumber) {
   // Hide all tab contents
-  const tabContents = document.querySelectorAll('.tab-content');
+  const tabContents = document.querySelectorAll('[id^="tab"]');
   tabContents.forEach(content => content.style.display = 'none');
   
   // Remove active class from all buttons
   const tabButtons = document.querySelectorAll('.tab-button');
   tabButtons.forEach(button => {
-    button.style.background = '#f8f9fa';
-    button.style.color = '#333';
+    button.className = button.className.replace(/bg-rose-500 text-white/g, 'bg-rose-200 text-slate-700 hover:bg-rose-300');
   });
   
   // Show selected tab content
   document.getElementById('tab' + tabNumber).style.display = 'block';
   
   // Add active class to clicked button
-  event.target.style.background = '#007bff';
-  event.target.style.color = 'white';
+  event.target.className = event.target.className.replace(/bg-rose-200 text-slate-700 hover:bg-rose-300/g, 'bg-rose-500 text-white');
 }
 </script>`;
 
@@ -160,16 +158,17 @@ function showTab(tabNumber) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Generated Tabs</title>
-    <style>
-        .tab-container { margin: 20px; }
-        .tab-buttons { margin-bottom: 0; }
-        .tab-content { min-height: 200px; }
-    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <div class="tab-container">
-        <div class="tab-buttons">
+<body class="bg-gray-50">
+    <div class="text-center my-5">
+        <h1 class="text-4xl font-bold mb-2 text-rose-700">Tab Generator</h1>
+    </div>
+    <div class="max-w-6xl mx-auto p-6">
+        <div class="bg-rose-200 p-2 border-b border-slate-500 rounded-t-lg">
+            <div class="flex gap-2 overflow-x-auto pb-2">
 ${buttonsHTML}
+            </div>
         </div>
 ${tabsHTML}
     </div>
