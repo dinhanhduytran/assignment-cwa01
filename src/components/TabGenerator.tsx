@@ -1,193 +1,29 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, X, Copy, Check } from "lucide-react";
-
-interface Tab {
-  id: string;
-  title: string;
-  content: string;
-}
+import { useTabManager } from "@/hooks/useTabManager";
+import { useHtmlGenerator } from "@/hooks/useHtmlGenerator";
+import { useClipboard } from "@/hooks/useClipboard";
 
 export default function TabGenerator() {
-  const [tabs, setTabs] = useState<Tab[]>([]);
-  const [activeTab, setActiveTab] = useState<string>("");
-  const [copied, setCopied] = useState(false);
-  const [isClient, setIsClient] = useState(false);
-  const [isLoadingFromStorage, setIsLoadingFromStorage] = useState(true);
+  const {
+    tabs,
+    activeTab,
+    currentTab,
+    createNewTab,
+    deleteTab,
+    updateTabTitle,
+    updateTabContent,
+    switchActiveTab,
+  } = useTabManager();
 
-  // Load data from localStorage after component mounts (client-side only)
-  useEffect(() => {
-    setIsClient(true);
+  const { generateHTML } = useHtmlGenerator();
+  const { copied, copyToClipboard } = useClipboard();
 
-    const savedTabs = localStorage.getItem("tabGeneratorTabs");
-    if (savedTabs) {
-      const parsedTabs = JSON.parse(savedTabs);
-      if (parsedTabs.length > 0) {
-        setTabs(parsedTabs);
-      }
-    }
-
-    const savedActiveTab = localStorage.getItem("tabGeneratorActiveTab");
-    if (savedActiveTab) {
-      setActiveTab(savedActiveTab);
-    }
-
-    setIsLoadingFromStorage(false);
-  }, []);
-
-  // Function to save tabs to localStorage
-  const saveTabsToStorage = (newTabs: Tab[], newActiveTab: string) => {
-    if (isClient && !isLoadingFromStorage) {
-      localStorage.setItem("tabGeneratorTabs", JSON.stringify(newTabs));
-      localStorage.setItem("tabGeneratorActiveTab", newActiveTab);
-    }
+  const handleCopyCode = () => {
+    copyToClipboard(generateHTML(tabs));
   };
-
-  const createNewTab = () => {
-    if (tabs.length >= 15) {
-      alert("Maximum of 15 tabs allowed");
-      return;
-    }
-
-    const newId = Date.now().toString();
-    const newTab: Tab = {
-      id: newId,
-      title: `Tab ${tabs.length + 1}`,
-      content: `Content for tab ${tabs.length + 1}`,
-    };
-    const newTabs = [...tabs, newTab];
-    setTabs(newTabs);
-    setActiveTab(newId);
-    saveTabsToStorage(newTabs, newId);
-  };
-
-  const deleteTab = (id: string) => {
-    const newTabs = tabs.filter((tab) => tab.id !== id);
-
-    // If we deleted the last tab, set activeTab to empty
-    if (newTabs.length === 0) {
-      setTabs([]);
-      setActiveTab("");
-      saveTabsToStorage([], "");
-      return;
-    }
-
-    // If we deleted the active tab, switch to the first available tab
-    let newActiveTab = activeTab;
-    if (activeTab === id) {
-      newActiveTab = newTabs[0].id;
-      setActiveTab(newActiveTab);
-    }
-
-    setTabs(newTabs);
-    saveTabsToStorage(newTabs, newActiveTab);
-  };
-
-  const updateTabTitle = (id: string, title: string) => {
-    const newTabs = tabs.map((tab) =>
-      tab.id === id ? { ...tab, title } : tab
-    );
-    setTabs(newTabs);
-    saveTabsToStorage(newTabs, activeTab);
-  };
-
-  const updateTabContent = (id: string, content: string) => {
-    const newTabs = tabs.map((tab) =>
-      tab.id === id ? { ...tab, content } : tab
-    );
-    setTabs(newTabs);
-    saveTabsToStorage(newTabs, activeTab);
-  };
-
-  const switchActiveTab = (id: string) => {
-    setActiveTab(id);
-    saveTabsToStorage(tabs, id);
-  };
-
-  const generateHTML = () => {
-    const tabsHTML = tabs
-      .map(
-        (tab, index) => `
-  <div class="bg-white border border-slate-500 border-t-0 rounded-b-lg p-2 overflow-y-auto min-h-[200px]" id="tab${
-    index + 1
-  }" style="display: ${index === 0 ? "block" : "none"};">
-    <div>${tab.content}</div>
-  </div>`
-      )
-      .join("");
-
-    const buttonsHTML = tabs
-      .map(
-        (tab, index) => `
-  <button class="tab-button px-3 py-1 mb-2 text-sm rounded transition-colors whitespace-nowrap flex-shrink-0 cursor-pointer ${
-    index === 0
-      ? "bg-rose-500 text-white"
-      : "bg-rose-200 text-slate-700 hover:bg-rose-300"
-  }" onclick="showTab(${index + 1})">
-    ${tab.title}
-  </button>`
-      )
-      .join("");
-
-    const javascript = `
-<script>
-function showTab(tabNumber) {
-  // Hide all tab contents
-  const tabContents = document.querySelectorAll('[id^="tab"]');
-  tabContents.forEach(content => content.style.display = 'none');
-  
-  // Remove active class from all buttons
-  const tabButtons = document.querySelectorAll('.tab-button');
-  tabButtons.forEach(button => {
-    button.className = button.className.replace(/bg-rose-500 text-white/g, 'bg-rose-200 text-slate-700 hover:bg-rose-300');
-  });
-  
-  // Show selected tab content
-  document.getElementById('tab' + tabNumber).style.display = 'block';
-  
-  // Add active class to clicked button
-  event.target.className = event.target.className.replace(/bg-rose-200 text-slate-700 hover:bg-rose-300/g, 'bg-rose-500 text-white');
-}
-</script>`;
-
-    return `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generated Tabs</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-50">
-    <div class="text-center my-5">
-        <h1 class="text-4xl font-bold mb-2 text-rose-700">Tab Generator</h1>
-    </div>
-    <div class="max-w-6xl mx-auto p-6">
-        <div class="bg-rose-200 p-2 border-b border-slate-500 rounded-t-lg">
-            <div class="flex gap-2 overflow-x-auto pb-2">
-${buttonsHTML}
-            </div>
-        </div>
-${tabsHTML}
-    </div>
-${javascript}
-</body>
-</html>`;
-  };
-
-  const copyToClipboard = async () => {
-    try {
-      await navigator.clipboard.writeText(generateHTML());
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error("Failed to copy: ", err);
-    }
-  };
-
-  const currentTab = tabs.find((tab) => tab.id === activeTab);
 
   return (
     <>
@@ -319,7 +155,7 @@ ${javascript}
           <div className="flex flex-col">
             <div className="flex justify-between items-center mb-3">
               <h3 className="text-xl font-semibold">Generated HTML Code</h3>
-              <Button onClick={copyToClipboard} variant="default" size="sm">
+              <Button onClick={handleCopyCode} variant="default" size="sm">
                 {copied ? (
                   <>
                     <Check className="w-4 h-4 mr-2" />
@@ -349,7 +185,7 @@ ${javascript}
                   </div>
                 ) : (
                   <pre className="text-sm text-gray-800 dark:text-gray-200 whitespace-pre-wrap">
-                    <code>{generateHTML()}</code>
+                    <code>{generateHTML(tabs)}</code>
                   </pre>
                 )}
               </div>
