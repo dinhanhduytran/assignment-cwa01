@@ -15,8 +15,8 @@ export default function About() {
             height="400"
             className="rounded-lg shadow-lg"
           >
-            <source src="/your-video.mp4" type="video/mp4" />
-            Your browser does not support the video tag.
+            <source src="/showcasevideo.mp4" type="video/mp4" />
+
           </video>
         </div>
       </div>
