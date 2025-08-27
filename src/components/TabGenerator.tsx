@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, X, Copy, Check } from "lucide-react";
+import Cookies from "js-cookie";
 
 interface Tab {
   id: string;
@@ -17,7 +18,7 @@ export default function TabGenerator() {
   const [isClient, setIsClient] = useState(false);
   const [isLoadingFromStorage, setIsLoadingFromStorage] = useState(true);
 
-  // Load data from localStorage after component mounts (client-side only)
+  // Load data from localStorage and cookies after component mounts (client-side only)
   useEffect(() => {
     setIsClient(true);
 
@@ -26,12 +27,23 @@ export default function TabGenerator() {
       const parsedTabs = JSON.parse(savedTabs);
       if (parsedTabs.length > 0) {
         setTabs(parsedTabs);
-      }
-    }
 
-    const savedActiveTab = localStorage.getItem("tabGeneratorActiveTab");
-    if (savedActiveTab) {
-      setActiveTab(savedActiveTab);
+        // Try to load active tab from cookie first, then localStorage
+        const cookieTabId = Cookies.get("activeTabId");
+        console.log("Loading from cookie:", cookieTabId);
+        if (
+          cookieTabId &&
+          parsedTabs.some((tab: Tab) => tab.id === cookieTabId)
+        ) {
+          console.log("Setting active tab from cookie:", cookieTabId);
+          setActiveTab(cookieTabId);
+        } else {
+          const savedActiveTab = localStorage.getItem("tabGeneratorActiveTab");
+          if (savedActiveTab) {
+            setActiveTab(savedActiveTab);
+          }
+        }
+      }
     }
 
     setIsLoadingFromStorage(false);
@@ -42,6 +54,19 @@ export default function TabGenerator() {
     if (isClient && !isLoadingFromStorage) {
       localStorage.setItem("tabGeneratorTabs", JSON.stringify(newTabs));
       localStorage.setItem("tabGeneratorActiveTab", newActiveTab);
+    }
+  };
+
+  // Function to save active tab to cookie
+  const saveActiveTabToCookie = (tabId: string) => {
+    if (isClient && tabId) {
+      console.log("Saving to cookie:", tabId);
+      Cookies.set("activeTabId", tabId, {
+        expires: 7,
+        path: "/",
+        sameSite: "lax",
+      }); // Expires in 7 days
+      console.log("Cookie saved. All cookies:", document.cookie);
     }
   };
 
@@ -61,6 +86,7 @@ export default function TabGenerator() {
     setTabs(newTabs);
     setActiveTab(newId);
     saveTabsToStorage(newTabs, newId);
+    saveActiveTabToCookie(newId);
   };
 
   const deleteTab = (id: string) => {
@@ -71,6 +97,7 @@ export default function TabGenerator() {
       setTabs([]);
       setActiveTab("");
       saveTabsToStorage([], "");
+      Cookies.remove("activeTabId"); // Remove cookie when no tabs
       return;
     }
 
@@ -83,6 +110,7 @@ export default function TabGenerator() {
 
     setTabs(newTabs);
     saveTabsToStorage(newTabs, newActiveTab);
+    saveActiveTabToCookie(newActiveTab);
   };
 
   const updateTabTitle = (id: string, title: string) => {
@@ -104,6 +132,7 @@ export default function TabGenerator() {
   const switchActiveTab = (id: string) => {
     setActiveTab(id);
     saveTabsToStorage(tabs, id);
+    saveActiveTabToCookie(id);
   };
 
   const generateHTML = () => {
