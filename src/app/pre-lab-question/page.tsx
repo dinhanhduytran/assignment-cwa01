@@ -1,3 +1,5 @@
+import CommingSoon from "@/components/CommingSoon";
+
 export default function PrelabQuestion() {
-  return <div>Coming Soon</div>;
+  return <CommingSoon title="Prelab Question" description="Comming Soon" />;
 }

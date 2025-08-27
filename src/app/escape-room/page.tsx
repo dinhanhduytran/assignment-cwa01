@@ -1,3 +1,5 @@
+import CommingSoon from "@/components/CommingSoon";
+
 export default function EscapeRoom() {
-  return <div>Coming Soon</div>;
+  return <CommingSoon title="Escape Room" description="Comming Soon" />;
 }
