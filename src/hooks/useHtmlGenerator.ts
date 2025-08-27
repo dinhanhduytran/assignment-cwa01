@@ -8,7 +8,9 @@ export const useHtmlGenerator = () => {
   <div class="bg-white border border-rose-500 rounded-b-lg p-2 overflow-y-auto min-h-[200px]" id="tab${
     index + 1
   }" style="display: ${index === 0 ? "block" : "none"};">
-    <div>${tab.content}</div>
+    <pre style="white-space: pre-wrap; margin: 0; font-family: inherit; font-size: inherit;">${
+      tab.content
+    }</pre>
   </div>`
       )
       .join("");

@@ -32,11 +32,10 @@ export default function NavBar() {
             <Link
               key={item.href}
               href={item.href}
-              className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
-                isActive
-                  ? "text-rose-500 bg-rose-100 dark:text-blue-300 dark:bg-slate-600"
-                  : "hover:text-rose-400 hover:bg-rose-100 dark:hover:text-blue-200 dark:hover:bg-slate-600"
-              }`}
+              className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${isActive
+                ? "text-rose-500 bg-rose-100 dark:text-blue-300 dark:bg-slate-600"
+                : "hover:text-rose-400 hover:bg-rose-100 dark:hover:text-blue-200 dark:hover:bg-slate-600"
+                }`}
             >
               {item.label}
             </Link>
@@ -64,11 +63,10 @@ export default function NavBar() {
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`w-full px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 block ${
-                      isActive
-                        ? "text-rose-500 bg-rose-100 dark:text-blue-300 dark:bg-slate-600"
-                        : "text-gray-700 dark:text-gray-300 hover:text-rose-400 hover:bg-rose-100 dark:hover:text-blue-200 dark:hover:bg-slate-600"
-                    }`}
+                    className={`w-full px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 block ${isActive
+                      ? "text-rose-500 bg-rose-100 dark:text-blue-300 dark:bg-slate-600"
+                      : "text-gray-700 dark:text-gray-300 hover:text-rose-400 hover:bg-rose-100 dark:hover:text-blue-200 dark:hover:bg-slate-600"
+                      }`}
                   >
                     {item.label}
                   </Link>

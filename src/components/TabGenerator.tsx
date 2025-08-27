@@ -145,7 +145,9 @@ export default function TabGenerator() {
                 </div>
                 {/* content */}
                 <div className="p-2 overflow-y-auto">
-                  <div>{currentTab?.content}</div>
+                  <pre className="whitespace-pre-wrap leading-relaxed m-0 font-sans text-sm">
+                    {currentTab?.content}
+                  </pre>
                 </div>
               </div>
             )}
